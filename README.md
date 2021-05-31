@@ -12,7 +12,7 @@ Collect current firmware state, by Network or ORG wide
 #
 # -k <your api key> [MANDATORY]
 # -o <your org name> [MANDATORY]
-# -n <specific network name> [optional (not case sensitive)]
+# -n <specific network name> [OPTIONAL (not case sensitive)]
 #
 # usage python3 main.py -k <api key> -o <specific org name> -n <network name>
 ######################################################################################################
