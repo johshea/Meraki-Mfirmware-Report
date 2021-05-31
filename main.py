@@ -1,0 +1,147 @@
+#this script is a prototype, and very specific. As always it should be executed on aproduction env only after thourough testing.
+#This script functions as a way to validate an org or networks current firmware state.
+#the dashboard
+##########################################################
+# Prep
+#pip3 install requests
+#pip3 install  pandas
+##########################################################
+#
+# -k <your api key> [MANDATORY]
+# -o <your org name> [MANDATORY]
+# -n <specific network name> [optional (not case sensitive)]
+#
+# usage python3 main.py -k <api key> -o <specific org name> -n <network name>
+######################################################################################################
+
+
+
+import requests
+import pandas as pd
+import datetime
+import sys, getopt
+
+
+def get_networks(orgid):
+    # create iterable list of all networks and then create filtered categories
+    net_response = requests.request("GET", f'{m_baseUrl}/organizations/{orgid}/networks/', headers=m_headers)
+    if 'json' in net_response.headers.get('Content-Type'):
+        # print(networks)
+        return net_response.json()
+    else:
+        print('Response content is not in JSON format.')
+        sys.exit(0)
+
+
+def create_df(networkid, networkname):
+    device_req = requests.get(f'{m_baseUrl}/networks/{networkid}/devices', headers=m_headers)
+    try:
+        if 'json' in device_req.headers.get('Content-Type'):
+            devices = device_req.json()
+            device_data = {'Network': [], 'Model': [], 'Serial': [], 'MAC': [], 'Firmware': [], }
+            # populate the data storage object
+            for device in devices:
+                device_data['Network'].append(networkname)
+                device_data['Model'].append(device['model'])
+                device_data['Serial'].append(device['serial'])
+                #device_data['Name'].append(device['name'])
+                device_data['MAC'].append(device['mac'])
+                device_data['Firmware'].append(device['firmware'])
+
+               # Build switch port dataframe
+                device_df = pd.DataFrame(data=device_data)
+
+               # Write dataframe to csv
+                device_df.to_csv(path_or_buf=networkname + '_devices-' + str(time) + '.csv', index=False)
+
+        return ("Firmware Report For" + " " + networkname + " " + "Created")
+
+    except:
+        return("A null or blank value was found in one of the collected fields for" + " " + networkname )
+
+def main(argv):
+    global arg_apikey
+    global m_baseUrl
+    global orgid
+    global m_headers
+    global m_baseUrl
+    global time
+
+    arg_apikey = None
+    arg_orgname = None
+    arg_netname = None
+
+    try:
+        opts, args = getopt.getopt(argv, 'k:o:n:')
+    except getopt.GetoptError:
+        sys.exit(0)
+
+    for opt, arg in opts:
+        if opt == '-k':
+            arg_apikey = arg
+        elif opt == '-o':
+            arg_orgname = arg
+        elif opt == '-n':
+            arg_netname = arg
+
+
+    #print(arg_apikey) #test point for correct apikey
+    #print(arg_orgname) #test point for correct orgname
+    #print(arg_netname) #test print for correct network name
+
+
+    if arg_apikey is None or arg_orgname is None:
+        print('Please specify the required values!')
+        sys.exit(0)
+
+
+    # set needed vlaues from env_vars
+    m_headers = {'X-Cisco-Meraki-API-Key': arg_apikey}
+    m_baseUrl = 'https://api.meraki.com/api/v1'
+
+    time = datetime.datetime.now()
+
+    # get orgid for specified org name
+    org_response = requests.request("GET", f'{m_baseUrl}/organizations/', headers=m_headers)
+    org = org_response.json()
+    for row in org:
+        if row['name'] == arg_orgname:
+            orgid = row['id']
+            #print(orgid)
+            print("Org" + " " + row['name'] + " " + "found.")
+        else:
+            print("Exception: This Org does not match:" + ' ' + row['name'] + ' ' + 'Is not the orginization specified!')
+
+    # create iterable list of all networks and then create filtered categories
+    networks = get_networks(orgid)
+
+
+    if arg_netname != None:
+        for i in range(len(networks)):
+            if networks[i]['name'].lower() == arg_netname.lower():
+                print("Creating Report for Meraki Network" + " " + networks[i]['id'])
+                state = create_df(networks[i]['id'], networks[i]['name'])
+                print(state)
+
+            else:
+                print("No Match for Network" + " " + arg_netname + " " +  "Found!")
+                sys.exit(0)
+
+
+    elif arg_netname == None:
+        for i in range(len(networks)):
+            if networks[i]['productTypes'] != ['systemsManager']:
+                print("Creating Report for Meraki Network" + " " + networks[i]['id'])
+                create_df(networks[i]['id'], networks[i]['name'])
+                state = create_df(networks[i]['id'], networks[i]['name'])
+                print(state)
+
+
+
+    else:
+        print("Network" + " " + arg_netname + " " + "Not Found!")
+        sys.exit(0)
+
+
+if __name__ == '__main__':
+    main(sys.argv[1:])
