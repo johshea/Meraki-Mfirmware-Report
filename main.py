@@ -3,6 +3,7 @@
 #the dashboard
 ##########################################################
 # Prep
+#Environment with Python3 installed
 #pip3 install requests
 #pip3 install  pandas
 ##########################################################
