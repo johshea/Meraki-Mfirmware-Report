@@ -22,6 +22,9 @@ import pandas as pd
 import datetime
 import sys, getopt
 
+def rem_whitespace(string):
+    return string.split()
+
 
 def get_networks(orgid):
     # create iterable list of all networks and then create filtered categories
