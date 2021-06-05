@@ -42,23 +42,23 @@ def create_df(networkid, networkname):
     try:
         if 'json' in device_req.headers.get('Content-Type'):
             devices = device_req.json()
-            device_labels = ['Network', 'Model', 'Serial', 'MAC', 'Firmware']
-            device_data = {'Network': [], 'Model': [], 'Serial': [], 'MAC': [], 'Firmware': [], }
+
+            #create an empty list to store dictionary objects
+            device_data = []
+
             # populate the data storage object
             for device in devices:
-                device_data['Network'].append(networkname)
-                device_data['Model'].append(device['model'])
-                device_data['Serial'].append(device['serial'])
-                #device_data['Name'].append(device['name'])
-                device_data['MAC'].append(device['mac'])
-                device_data['Firmware'].append(device['firmware'])
+               device_data_df = {'Name': networkname, 'model': device['model'], 'Serial': device['serial'], 'MAC': device['mac'], 'Firmware': device['firmware']}
+               device_data.append(device_data_df)
 
-               #Build switch port dataframe
-                device_df = pd.DataFrame(data=device_data)
+               #print(device_data_df) #test dataset
 
-               # Write dataframe to csv
-                device_df.to_csv(path_or_buf=networkname + '_devices-' + str(time) + '.csv', index=False)
-
+            #Create and write the CSV file
+            keys = device_data[0].keys()
+            with open(networkname + '_devices-' + str(time) + '.csv', 'w', newline='')  as output_file:
+                    dict_writer = csv.DictWriter(output_file, keys)
+                    dict_writer.writeheader()
+                    dict_writer.writerows(device_data)
 
         return ("Firmware Report For" + " " + networkname + " " + "Created")
 
