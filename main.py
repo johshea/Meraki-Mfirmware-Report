@@ -2,7 +2,7 @@
 #This script functions as a way to validate an org or networks current firmware state.
 #the dashboard
 ##########################################################
-# Prep
+# Prep your environment
 #Environment with Python3 installed
 #pip3 install requests
 #pip3 install  pandas
