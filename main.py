@@ -122,15 +122,11 @@ def main(argv):
 
     if arg_netname != None:
         for i in range(len(networks)):
+
             if networks[i]['name'].lower() == arg_netname.lower():
                 print("Creating Report for Meraki Network" + " " + networks[i]['id'])
                 state = create_df(networks[i]['id'], networks[i]['name'])
                 print(state)
-
-            else:
-                print("No Match for Network" + " " + arg_netname + " " +  "Found!")
-                sys.exit(0)
-
 
     elif arg_netname == None:
         for i in range(len(networks)):
@@ -139,8 +135,6 @@ def main(argv):
                 create_df(networks[i]['id'], networks[i]['name'])
                 state = create_df(networks[i]['id'], networks[i]['name'])
                 print(state)
-
-
 
     else:
         print("Network" + " " + arg_netname + " " + "Not Found!")
