@@ -20,7 +20,7 @@
 import requests
 import pandas as pd
 import datetime
-import sys, getopt
+import sys, getopt, csv
 
 def rem_whitespace(string):
     return string.split()
@@ -42,6 +42,7 @@ def create_df(networkid, networkname):
     try:
         if 'json' in device_req.headers.get('Content-Type'):
             devices = device_req.json()
+            device_labels = ['Network', 'Model', 'Serial', 'MAC', 'Firmware']
             device_data = {'Network': [], 'Model': [], 'Serial': [], 'MAC': [], 'Firmware': [], }
             # populate the data storage object
             for device in devices:
@@ -52,11 +53,12 @@ def create_df(networkid, networkname):
                 device_data['MAC'].append(device['mac'])
                 device_data['Firmware'].append(device['firmware'])
 
-               # Build switch port dataframe
+               #Build switch port dataframe
                 device_df = pd.DataFrame(data=device_data)
 
                # Write dataframe to csv
                 device_df.to_csv(path_or_buf=networkname + '_devices-' + str(time) + '.csv', index=False)
+
 
         return ("Firmware Report For" + " " + networkname + " " + "Created")
 
