@@ -5,6 +5,7 @@
 # Prep your environment
 #Environment with Python3 installed
 #pip3 install requests
+#
 ##########################################################
 #
 # -k <your api key> [MANDATORY]
