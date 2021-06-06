@@ -5,7 +5,6 @@
 # Prep your environment
 #Environment with Python3 installed
 #pip3 install requests
-#pip3 install  pandas
 ##########################################################
 #
 # -k <your api key> [MANDATORY]
