@@ -18,7 +18,6 @@
 
 
 import requests
-import pandas as pd
 import datetime
 import sys, getopt, csv
 
