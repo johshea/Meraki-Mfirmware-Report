@@ -5,12 +5,16 @@
 # Prep your environment
 #Environment with Python3 installed
 #pip3 install requests
-#pip3 install  pandas
 ##########################################################
+#API Walkthru
+#resolve org name to ID with target /organizations/{orgid}/networks/
+#retrieve network list based on supplied network name (or all) /organizations/{orgid}/networks/
+#pull device information /networks/{networkid}/devices
+#end API calls
 #
 # -k <your api key> [MANDATORY]
 # -o <your org name> [MANDATORY]
-# -n <specific network name> [optional (not case sensitive)]
+# -n <specific network name> [optional (not case sensitive)] if not selected it will pull all
 #
 # usage python3 main.py -k <api key> -o <specific org name> -n <network name>
 ######################################################################################################
@@ -18,7 +22,6 @@
 
 
 import requests
-import pandas as pd
 import datetime
 import sys, getopt, csv
 
