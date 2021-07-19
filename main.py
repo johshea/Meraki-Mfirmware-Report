@@ -5,6 +5,7 @@
 # Prep your environment
 #Environment with Python3 installed
 #pip3 install requests
+#pip3 install pathlib
 ##########################################################
 #API Walkthru
 #resolve org name to ID with target /organizations/{orgid}/networks/
@@ -23,7 +24,8 @@
 
 import requests
 import datetime
-import sys, getopt, csv
+from pathlib import Path
+import sys, getopt, csv, os
 
 def rem_whitespace(string):
     return string.split()
@@ -58,12 +60,16 @@ def create_df(networkid, networkname):
 
             #Create and write the CSV file
             keys = device_data[0].keys()
-            with open(networkname + '_devices-' + str(time) + '.csv', 'w', newline='')  as output_file:
+            file = networkname + '_devices-' + str(time) + '.csv'
+            path = os.getcwd() + file
+            #print(path)
+            #with open(networkname + '_devices-' + str(time) + '.csv', 'w', newline='')  as output_file:
+            with open(path, 'w+', newline='')  as output_file:
                     dict_writer = csv.DictWriter(output_file, keys)
                     dict_writer.writeheader()
                     dict_writer.writerows(device_data)
 
-        return ("Firmware Report For" + " " + networkname + " " + "Created")
+            return ("Firmware Report For" + " " + networkname + " " + "Created")
 
     except:
         return("A null or blank value was found in one of the collected fields for" + " " + networkname )
