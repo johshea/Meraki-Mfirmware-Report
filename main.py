@@ -60,11 +60,10 @@ def create_df(networkid, networkname):
 
             #Create and write the CSV file
             keys = device_data[0].keys()
-            file = networkname + '_devices-' + str(time) + '.csv'
-            path = os.getcwd() + file
-            #print(path)
-            #with open(networkname + '_devices-' + str(time) + '.csv', 'w', newline='')  as output_file:
-            with open(path, 'w+', newline='')  as output_file:
+            filename = networkname + '_devices-' + str(time) + '.csv'
+            inpath = Path(filename)
+            #print(inpath)
+            with inpath.open('w+', newline='')  as output_file:
                     dict_writer = csv.DictWriter(output_file, keys)
                     dict_writer.writeheader()
                     dict_writer.writerows(device_data)
