@@ -53,8 +53,12 @@ def create_df(networkid, networkname):
                #print(device_data_df) #test dataset
 
             #Create and write the CSV file
-            keys = device_data[0].keys()
-            with open(networkname + '_devices-' + str(time) + '.csv', 'w', newline='')  as output_file:
+            if len(device_data) > 0:
+                keys = device_data[0].keys()
+                filename = networkname + '_devices-' + str(time) + '.csv'
+                inpath = Path.cwd() / filename
+                print(inpath)
+                with inpath.open(mode='w+', newline='') as output_file:
                     dict_writer = csv.DictWriter(output_file, keys)
                     dict_writer.writeheader()
                     dict_writer.writerows(device_data)
@@ -104,7 +108,8 @@ def main(argv):
     m_headers = {'X-Cisco-Meraki-API-Key': arg_apikey}
     m_baseUrl = 'https://api.meraki.com/api/v1'
 
-    time = datetime.datetime.now()
+    d = datetime.datetime.now()
+    time = d.date()
 
     # get orgid for specified org name
     org_response = requests.request("GET", f'{m_baseUrl}/organizations/', headers=m_headers)
