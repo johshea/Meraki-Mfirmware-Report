@@ -1,5 +1,5 @@
 # Meraki-Mfirmware-Report
-#this script is a prototype, and very specific. As always it should be executed on aproduction env only after thourough testing.
+#this script is a prototype, and very specific. As always it should be executed on a production env only after thourough testing.
 #This script functions as a way to validate an org or networks current firmware state.
 #the dashboard
 ##########################################################
